@@ -37,25 +37,48 @@
       margin-top: 20px;
   
       .horario-block {
-        padding: 15px;
+        padding: 10px;
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        display: flex;
+        display: grid;
         flex-direction: column;
         align-items: flex-start;
         text-align: left;
         transition: transform 0.2s;
+        border: solid grey .7px;
   
         &:hover {
           transform: scale(1.02);
         }
   
         .horario-info {
-          font-weight: bold;
+          font-weight: lighter;
           display: flex;
-          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
           gap: 5px;
-          margin-bottom: 8px;
+          .horario{
+            width: 70%;
+            display: flex;
+            justify-content: space-between;
+            border-right: grey solid 1px;
+            padding: 0 5px;
+            .hora-infox{
+              padding: 0 5px;
+              border-right: solid grey 1px;
+            }
+            .modalidad-info{
+              padding-left: 5px;
+            }
+          }
+          select {
+            padding: 5px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+          }
         }
   
         .profesor-info {
