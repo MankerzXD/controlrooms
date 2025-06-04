@@ -2,9 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Home from './components/Home';
 import ProtectedRoute from './components/ProtectedRoute';
-import Aula from './components/Aula'; // Importamos Aula.jsx
-
+import Aula from './components/Aula';
 import Sede from './components/Sede';
+import SeleccionPiso from './components/SeleccionPiso';
+
 import './styles/global.scss';
 import './styles/Login.scss';
 import './styles/home.scss';
@@ -16,8 +17,9 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Home />} />
-                <Route path="/sede/:sedeId" element={<ProtectedRoute><Sede /></ProtectedRoute>} />
-                <Route path="/aula/:aulaId" element={<ProtectedRoute><Aula /></ProtectedRoute>} /> {/* Nueva ruta */}
+                <Route path="/sede/:sede" element={<ProtectedRoute><SeleccionPiso /></ProtectedRoute>} />
+                <Route path="/aula/:aulaId" element={<ProtectedRoute><Aula /></ProtectedRoute>} />
+                <Route path="/piso/:sede/:pisoId" element={<ProtectedRoute><Aula /></ProtectedRoute>} /> {/* ✅ Vista nueva */}
             </Routes>
         </BrowserRouter>
     );
