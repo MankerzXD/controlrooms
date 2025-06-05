@@ -6,10 +6,10 @@ import { Lock, Unlock } from 'lucide-react';
 const generarMockData = (sede, piso) => {
   const aulasPorSedeYPiso = {
     central: {
-      2: ['2ºA', '2ºB', '2ºC'],
-      3: ['3ºA', '3ºB', '3ºC'],
-      4: ['4ºA', '4ºB', '4ºC'],
-      5: ['5ºA', '5ºB']
+      2: ['2ºA', '2ºB', '2ºC', '2ºD', '2ºE'],
+      3: ['3ºA', '3ºB', '3ºC', '3ºD', '3ºE'],
+      4: ['4ºA', '4ºB', '4ºC', '4ºD', '4ºE'],
+      5: ['5ºA', '5ºB', '5ºC', '5ºD', '5ºE']
     },
     cordoba: {
       1: ['1ºF', '1ºG', '1ºH'],
