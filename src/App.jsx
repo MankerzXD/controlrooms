@@ -19,7 +19,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/sede/:sede" element={<ProtectedRoute><SeleccionPiso /></ProtectedRoute>} />
                 <Route path="/aula/:aulaId" element={<ProtectedRoute><Aula /></ProtectedRoute>} />
-                <Route path="/piso/:sede/:pisoId" element={<ProtectedRoute><Aula /></ProtectedRoute>} /> {/* ✅ Vista nueva */}
+                <Route path="/piso/:sede/:pisoId" element={<ProtectedRoute><Aula /></ProtectedRoute>} />
             </Routes>
         </BrowserRouter>
     );
