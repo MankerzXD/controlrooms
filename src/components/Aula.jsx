@@ -98,14 +98,15 @@ export default function Aula() {
                 {aula.clases.slice(0, expandir[index] ? aula.clases.length : 2).map((clase, idx) => (
                   <div key={idx} className="detalle-row">
                     <div className="estado-selector-wrapper">
-                      <div className="estado-circle" style={{ backgroundColor: clase.color }}></div>
-                      <select className="estado-selector">
-                        <option value="Abierta">A</option>
-                        <option value="Pendiente">P</option>
-                        <option value="Finalizado">F</option>
-                      </select>
+                      <div className='ContainerState'>
+                        <div className="estado-circle" style={{ backgroundColor: clase.color }}></div>
+                        <select className="estado-selector">
+                          <option value="Abierta">Abierta</option>
+                          <option value="Pendiente">Pendiente</option>
+                          <option value="Finalizado">Finalizado</option>
+                        </select>
+                      </div>
                     </div>
-                    <span>{aula.nombre}</span>
                     <span>{clase.horario}</span>
                     <span className="modalidad">{clase.modalidadCorta}</span>
                   </div>

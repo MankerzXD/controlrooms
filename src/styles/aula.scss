@@ -23,6 +23,17 @@
       color: #900;
     }
   }
+  .ContainerState{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    .estado-selector{
+      border-radius: 5px;
+      border: #66666600 solid 1px;
+      background-color: rgba(255, 255, 255, 0);
+      padding: 3px;
+    }
+  }
 
   .horarios {
     display: flex;
@@ -81,11 +92,15 @@
       .ver-mas {
         margin-top: 0.75rem;
         background: #f9f9f9;
-        border: 1px solid #ccc;
+        border: 1px solid #cccccc00;
         padding: 0.5rem 1rem;
         border-radius: 0.5rem;
         font-size: 0.9rem;
         cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
       }
     }
 
