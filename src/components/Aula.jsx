@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/aula.scss';
+import ModalComentario from './ModalComentario';
 import { Lock, Unlock, MessageSquare } from 'lucide-react';
 
 const generarMockData = (sede, piso) => {
@@ -81,9 +82,16 @@ export default function Aula() {
     const id = `${index}-${idx}`;
     setClaseExpandida(prev => prev === id ? null : id);
   };
+
+  const [claseSeleccionada, setClaseSeleccionada] = useState(null);
+  const [aulaSeleccionada, setAulaSeleccionada] = useState('');
+
+
+  const [modalActivo, setModalActivo] = useState(false);
+
   const [panelComentarioId, setPanelComentarioId] = useState(null);
 
-    const toggleComentario = (id) => {
+  const toggleComentario = (id) => {
     setPanelComentarioId(prev => prev === id ? null : id);
   };
   return (
@@ -133,9 +141,18 @@ export default function Aula() {
                         <div className="info-extra">
                           <div className="profesor-materia">
                             {clase.profesor} - {clase.materia}
-                            <button className="comentario-btn" onClick={(e) => { e.stopPropagation(); toggleComentario(id); }}>
+                            <button
+                              className="comentario-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setClaseSeleccionada(clase);
+                                setAulaSeleccionada(aula.nombre);
+                                setModalActivo(true);
+                              }}
+                            >
                               <MessageSquare size={16} />
                             </button>
+
                           </div>
                           {panelComentarioId === id && (
                             <>
@@ -169,6 +186,18 @@ export default function Aula() {
           </div>
         ))}
       </div>
+      {modalActivo && claseSeleccionada && (
+        <ModalComentario
+          profesor={claseSeleccionada.profesor}
+          materia={claseSeleccionada.materia}
+          aula={aulaSeleccionada}
+          horario={claseSeleccionada.horario}
+          comentario={comentario}
+          setComentario={setComentario}
+          onClose={() => setModalActivo(false)}
+        />
+      )}
+
     </div>
   );
 }
