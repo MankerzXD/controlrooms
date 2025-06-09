@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/aula.scss';
-import { Lock, Unlock, MessageSquare, MessageSquare } from 'lucide-react';
+import { Lock, Unlock, MessageSquare } from 'lucide-react';
 
 const generarMockData = (sede, piso) => {
   const aulasPorSedeYPiso = {
@@ -81,6 +81,7 @@ export default function Aula() {
     const id = `${index}-${idx}`;
     setClaseExpandida(prev => prev === id ? null : id);
   };
+  const [panelComentarioId, setPanelComentarioId] = useState(null);
 
     const toggleComentario = (id) => {
     setPanelComentarioId(prev => prev === id ? null : id);
