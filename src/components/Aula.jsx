@@ -1,179 +1,131 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../styles/aula.scss';  // 👈 Usamos tu SCSS
+import '../styles/aula.scss';
+import { Lock, Unlock } from 'lucide-react';
 
-function Aula() {
-    const navigate = useNavigate();
-    const { aulaId } = useParams();
+const generarMockData = (sede, piso) => {
+  const aulasPorSedeYPiso = {
+    central: {
+      2: ['2ºA', '2ºB', '2ºC', '2ºD', '2ºE'],
+      3: ['3ºA', '3ºB', '3ºC', '3ºD', '3ºE'],
+      4: ['4ºA', '4ºB', '4ºC', '4ºD', '4ºE'],
+      5: ['5ºA', '5ºB', '5ºC', '5ºD', '5ºE']
+    },
+    cordoba: {
+      1: ['1ºF', '1ºG', '1ºH'],
+      2: ['2ºF', '2ºG', '2ºH'],
+      3: ['3ºG', '3ºH'],
+      4: ['4ºF', '4ºG', '4ºH', '4ºI']
+    },
+    alem: {
+      2: ['K', 'L', 'M', 'N', 'O', 'P', 'Q']
+    }
+  };
 
-    const [horarios, setHorarios] = useState([
-        {
-            inicio: '08:00',
-            fin: '12:00',
-            modalidad: 'Presencial',
-            estado: 'Pendiente',
-            profesor: 'Juan Pérez',
-            materia: 'Matemática',
-        },
-        {
-            inicio: '15:00',
-            fin: '17:00',
-            modalidad: 'Presencial',
-            estado: 'Finalizado',
-            profesor: 'Mauro Loma',
-            materia: 'Trap N Export',
-        },
-        {
-            inicio: '19:00',
-            fin: '22:00',
-            modalidad: 'Híbrida',
-            estado: 'Pendiente',
-            profesor: '',
-            materia: '',
-        },
-    ]);
+  const horarios = [
+    '08:00 - 10:00', '10:00 - 12:00', '12:00 - 14:00', '14:00 - 16:00',
+    '16:00 - 18:00', '18:00 - 20:00', '20:00 - 22:00', '21:00 - 23:00'
+  ];
+  const modalidades = ['Presencial', 'Híbrida'];
+  const estados = ['Abierta', 'Pendiente', 'Finalizado'];
 
-    const [abiertos, setAbiertos] = useState([]);
-    const [comentarios, setComentarios] = useState(() => {
-        const guardados = localStorage.getItem(`comentarios-${aulaId}`);
-        return guardados ? JSON.parse(guardados) : Array(horarios.length).fill('');
+  const aulas = (aulasPorSedeYPiso[sede] && aulasPorSedeYPiso[sede][piso]) || [];
+  const data = aulas.map((aula) => {
+    const cantidadClases = Math.floor(Math.random() * 6) + 2;
+    const clases = Array.from({ length: cantidadClases }, (_, idx) => {
+      const modalidad = modalidades[Math.floor(Math.random() * modalidades.length)];
+      return {
+        estado: estados[Math.floor(Math.random() * estados.length)],
+        horario: horarios[idx % horarios.length],
+        modalidad,
+        modalidadCorta: modalidad.toLowerCase().startsWith('presencial') ? 'P' : 'H',
+        color: ['green', 'yellow', 'gray'][Math.floor(Math.random() * 3)]
+      };
     });
-    const [panelComentarioIndex, setPanelComentarioIndex] = useState(null);
-    const [startX, setStartX] = useState(null);
+    return { nombre: aula, clases };
+  });
 
-    const handleEstadoChange = (index, nuevoEstado) => {
-        const nuevosHorarios = [...horarios];
-        nuevosHorarios[index].estado = nuevoEstado;
-        setHorarios(nuevosHorarios);
-    };
+  return data;
+};
 
-    const toggleDetalle = (index) => {
-        setAbiertos((prev) =>
-            prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-        );
-    };
+export default function Aula() {
+  const navigate = useNavigate();
+  const { sede, pisoId } = useParams();
+  const piso = parseInt(pisoId);
+  const [mockData, setMockData] = useState([]);
+  const [expandir, setExpandir] = useState({});
 
-    const handleTouchStart = (e) => {
-        setStartX(e.touches[0].clientX);
-    };
+  useEffect(() => {
+    setMockData(generarMockData(sede, piso));
+  }, [sede, piso]);
 
-    const handleTouchEnd = (index, e) => {
-        const endX = e.changedTouches[0].clientX;
-        if (startX - endX > 50) {
-            setPanelComentarioIndex(index);
-        }
-    };
+  const mostrarNombreSede = () => {
+    if (sede === 'central') return 'CÓRDOBA 374 / RECONQUISTA 775';
+    if (sede === 'alem') return 'SEDE ALEM';
+    if (sede === 'cordoba') return 'CÓRDOBA 637';
+    return sede.toUpperCase();
+  };
 
-    const handleMouseDown = (e) => {
-        setStartX(e.clientX);
-    };
+  const toggleVerMas = (index) => {
+    setExpandir((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
 
-    const handleMouseUp = (index, e) => {
-        if (startX - e.clientX > 50) {
-            setPanelComentarioIndex(index);
-        }
-    };
+  return (
+    <div className="container-infoaulas">
+      <div className="top-bar">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          <span className="material-icons">arrow_back</span>
+        </button>
+        <h1 className="text-center text-red-800">
+          {mostrarNombreSede()} - Piso {pisoId}
+        </h1>
+      </div>
 
-    const getEstadoColor = (estado) => {
-        switch (estado) {
-            case 'Finalizado':
-                return '#d3d3d3';
-            case 'Abierta':
-                return '#90ee90';
-            case 'Pendiente':
-                return '#fff176';
-            default:
-                return '#ffffff';
-        }
-    };
-
-    useEffect(() => {
-        localStorage.setItem(`comentarios-${aulaId}`, JSON.stringify(comentarios));
-    }, [comentarios, aulaId]);
-
-    return (
-        <div className="container-infoaulas">
-            <div className="aula-container">
-                <div className="top-bar">
-                    <button className="back-button" onClick={() => navigate(-1)}>
-                        <span className="material-icons">arrow_back</span>
-                    </button>
-                    <h1>{aulaId}</h1>
-                </div>
-
-                <div className="horarios">
-                    {horarios.map((horario, index) => (
-                        <div
-                            key={index}
-                            className="horario-block"
-                            style={{ backgroundColor: getEstadoColor(horario.estado) }}
-                            onClick={() => toggleDetalle(index)}
-                            onTouchStart={handleTouchStart}
-                            onTouchEnd={(e) => handleTouchEnd(index, e)}
-                            onMouseDown={handleMouseDown}
-                            onMouseUp={(e) => handleMouseUp(index, e)}
-                        >
-                            <div className="horario-info">
-                                <span>{horario.inicio} - {horario.fin}</span>
-                                <span> | </span>
-                                <span>{horario.modalidad}</span>
-                                <span> | </span>
-                                <select
-                                    value={horario.estado}
-                                    onClick={(e) => e.stopPropagation()}
-                                    onChange={(e) => handleEstadoChange(index, e.target.value)}
-                                >
-                                    <option value="Finalizado">Finalizado</option>
-                                    <option value="Abierta">Abierta</option>
-                                    <option value="Pendiente">Pendiente</option>
-                                </select>
-                            </div>
-
-                            {abiertos.includes(index) && horario.profesor && horario.materia && (
-                                <div className="profesor-info">
-                                    {horario.profesor} - {horario.materia}
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+      <div className="horarios">
+        {mockData.map((aula, index) => (
+          <div key={index} className="aula-card">
+            <div className="aula-header">
+              <h2>Aula {aula.nombre}</h2>
+              {aula.clases.length > 0 ? (
+                <Unlock size={16} className="lock-icon text-green-600" />
+              ) : (
+                <Lock size={16} className="lock-icon text-gray-400" />
+              )}
             </div>
 
-            {/* 🔥 Bottom Sheet Panel */}
-            {panelComentarioIndex !== null && (
-                <div className="bottom-sheet">
-                    <div className="sheet-header">
-                        <h3>
-                            {horarios[panelComentarioIndex].inicio} - {horarios[panelComentarioIndex].fin}
-                        </h3>
-                        <button
-                            onClick={() => setPanelComentarioIndex(null)}
-                            className="close-btn"
-                        >
-                            &times;
-                        </button>
+            {aula.clases.length > 0 ? (
+              <div className="aula-detalle">
+                {aula.clases.slice(0, expandir[index] ? aula.clases.length : 2).map((clase, idx) => (
+                  <div key={idx} className="detalle-row">
+                    <div className="estado-selector-wrapper">
+                      <div className='ContainerState'>
+                        <div className="estado-circle" style={{ backgroundColor: clase.color }}></div>
+                        <select className="estado-selector">
+                          <option value="Abierta">Abierta</option>
+                          <option value="Pendiente">Pendiente</option>
+                          <option value="Finalizado">Finalizado</option>
+                        </select>
+                      </div>
                     </div>
-                    <textarea
-                        className="sheet-textarea"
-                        rows={4}
-                        value={comentarios[panelComentarioIndex]}
-                        onChange={(e) => {
-                            const nuevos = [...comentarios];
-                            nuevos[panelComentarioIndex] = e.target.value;
-                            setComentarios(nuevos);
-                        }}
-                        placeholder="Escribí tu comentario acá..."
-                    ></textarea>
-                    <button
-                        onClick={() => setPanelComentarioIndex(null)}
-                        className="send-btn"
-                    >
-                        Enviar
-                    </button>
-                </div>
+                    <span>{clase.horario}</span>
+                    <span className="modalidad">{clase.modalidadCorta}</span>
+                  </div>
+                ))}
+                {aula.clases.length > 2 && (
+                  <button className="ver-mas" onClick={() => toggleVerMas(index)}>
+                    {expandir[index] ? 'Ver menos' : 'Ver más'}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="sin-clases">
+                <span>📭 Sin Clases Asignada</span>
+              </div>
             )}
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
-export default Aula;

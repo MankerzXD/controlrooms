@@ -8,9 +8,10 @@ function Home() {
     // Usuarios autorizados para ver el botón especial
     const autorizados = ['ajgarcia', 'mjsanchez', 'aquiroga'];
 
-    const handleSede = (sede) => {
-        navigate(`/sede/${sede}`);
-    };
+const handleSede = (sede) => {
+    navigate(`/sede/${sede}`);
+};
+
 
     const handleEventos = () => {
         navigate('/eventos');
@@ -20,6 +21,7 @@ function Home() {
         localStorage.removeItem('user');
         navigate('/login');
     };
+
     const handleDescargarSemana = () => {
         navigate('/adolfo');
     };
@@ -59,5 +61,3 @@ function Home() {
 }
 
 export default Home;
-
-
