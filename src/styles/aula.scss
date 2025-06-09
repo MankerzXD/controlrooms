@@ -96,12 +96,20 @@
           align-items: center;
         }
         .info-extra{
+          position: relative;
+          width: 100%;
           .profesor-materia{
 
           display: flex;
           width: 100%;
           justify-content: center;
           align-items: center;
+          }
+          .comentario-btn{
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
           }
         }
       }
