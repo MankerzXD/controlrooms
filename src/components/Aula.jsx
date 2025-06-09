@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/aula.scss';
-import { Lock, Unlock } from 'lucide-react';
+import { Lock, Unlock, MessageSquare } from 'lucide-react';
 
 const generarMockData = (sede, piso) => {
   const aulasPorSedeYPiso = {
@@ -128,4 +128,3 @@ export default function Aula() {
     </div>
   );
 }
-
