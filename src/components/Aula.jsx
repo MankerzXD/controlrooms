@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/aula.scss';
-import { Lock, Unlock } from 'lucide-react';
+import { Lock, Unlock, MessageSquare } from 'lucide-react';
 
 const generarMockData = (sede, piso) => {
   const aulasPorSedeYPiso = {
@@ -11,6 +11,7 @@ const generarMockData = (sede, piso) => {
       4: ['4ºA', '4ºB', '4ºC', '4ºD', '4ºE'],
       5: ['5ºA', '5ºB', '5ºC', '5ºD', '5ºE']
     },
+
     cordoba: {
       1: ['1ºF', '1ºG', '1ºH'],
       2: ['2ºF', '2ºG', '2ºH'],
@@ -28,6 +29,8 @@ const generarMockData = (sede, piso) => {
   ];
   const modalidades = ['Presencial', 'Híbrida'];
   const estados = ['Abierta', 'Pendiente', 'Finalizado'];
+  const materias = ['Matemática', 'Historia', 'Trap N Export', 'Economía', 'Diseño UX', 'Infraestructura', 'Programación'];
+  const profesores = ['Juan Pérez', 'Mauro Lombardo', 'Sofía Vega', 'Agustín Ledesma', 'Ximena Flores', 'Leonardo Ruiz'];
 
   const aulas = (aulasPorSedeYPiso[sede] && aulasPorSedeYPiso[sede][piso]) || [];
   const data = aulas.map((aula) => {
@@ -39,7 +42,9 @@ const generarMockData = (sede, piso) => {
         horario: horarios[idx % horarios.length],
         modalidad,
         modalidadCorta: modalidad.toLowerCase().startsWith('presencial') ? 'P' : 'H',
-        color: ['green', 'yellow', 'gray'][Math.floor(Math.random() * 3)]
+        color: ['green', 'yellow', 'gray'][Math.floor(Math.random() * 3)],
+        profesor: profesores[Math.floor(Math.random() * profesores.length)],
+        materia: materias[Math.floor(Math.random() * materias.length)]
       };
     });
     return { nombre: aula, clases };
@@ -54,6 +59,8 @@ export default function Aula() {
   const piso = parseInt(pisoId);
   const [mockData, setMockData] = useState([]);
   const [expandir, setExpandir] = useState({});
+  const [comentario, setComentario] = useState('');
+  const [claseExpandida, setClaseExpandida] = useState(null);
 
   useEffect(() => {
     setMockData(generarMockData(sede, piso));
@@ -70,6 +77,14 @@ export default function Aula() {
     setExpandir((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
+  const handleClaseClick = (index, idx) => {
+    const id = `${index}-${idx}`;
+    setClaseExpandida(prev => prev === id ? null : id);
+  };
+
+    const toggleComentario = (id) => {
+    setPanelComentarioId(prev => prev === id ? null : id);
+  };
   return (
     <div className="container-infoaulas">
       <div className="top-bar">
@@ -95,22 +110,50 @@ export default function Aula() {
 
             {aula.clases.length > 0 ? (
               <div className="aula-detalle">
-                {aula.clases.slice(0, expandir[index] ? aula.clases.length : 2).map((clase, idx) => (
-                  <div key={idx} className="detalle-row">
-                    <div className="estado-selector-wrapper">
-                      <div className='ContainerState'>
-                        <div className="estado-circle" style={{ backgroundColor: clase.color }}></div>
-                        <select className="estado-selector">
-                          <option value="Abierta">Abierta</option>
-                          <option value="Pendiente">Pendiente</option>
-                          <option value="Finalizado">Finalizado</option>
-                        </select>
+                {aula.clases.slice(0, expandir[index] ? aula.clases.length : 2).map((clase, idx) => {
+                  const id = `${index}-${idx}`;
+                  return (
+                    <div key={idx} className="detalle-row" onClick={() => handleClaseClick(index, idx)}>
+                      <div className='container-infox'>
+                        <div className="estado-selector-wrapper">
+                          <div className='ContainerState'>
+                            <div className="estado-circle" style={{ backgroundColor: clase.color }}></div>
+                            <select className="estado-selector">
+                              <option value="Abierta">Abierta</option>
+                              <option value="Pendiente">Pendiente</option>
+                              <option value="Finalizado">Finalizado</option>
+                            </select>
+                          </div>
+                        </div>
+                        <span>{clase.horario}</span>
+                        <span className="modalidad">{clase.modalidadCorta}</span>
                       </div>
+                      {claseExpandida === id && (
+                        <div className="info-extra">
+                          <div className="profesor-materia">
+                            {clase.profesor} - {clase.materia}
+                            <button className="comentario-btn" onClick={(e) => { e.stopPropagation(); toggleComentario(id); }}>
+                              <MessageSquare size={16} />
+                            </button>
+                          </div>
+                          {panelComentarioId === id && (
+                            <>
+                              <textarea
+                                className="comentario-textarea"
+                                rows={2}
+                                placeholder="Agregá un comentario..."
+                                value={comentario}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => setComentario(e.target.value)}
+                              />
+                              <button className="send-btn">Enviar</button>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <span>{clase.horario}</span>
-                    <span className="modalidad">{clase.modalidadCorta}</span>
-                  </div>
-                ))}
+                  );
+                })}
                 {aula.clases.length > 2 && (
                   <button className="ver-mas" onClick={() => toggleVerMas(index)}>
                     {expandir[index] ? 'Ver menos' : 'Ver más'}
@@ -128,4 +171,3 @@ export default function Aula() {
     </div>
   );
 }
-
