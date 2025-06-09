@@ -1,66 +1,93 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/Login.scss'; // asegurate de que login.scss exista
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/Login.scss';
 
 function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const handleLogin = (e) => {
-        e.preventDefault();
+  return (
+    <div className="login-container">
+      <h2>Iniciar sesión</h2>
 
-        if (!username.trim() || !password.trim()) {
-            setError('Debes completar todos los campos.');
-            return;
-        }
+      <form>
+        <input
+          type="text"
+          placeholder="Email"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-        // Guardar el usuario (falso por ahora)
-        localStorage.setItem('user', username);
+        <button
+          type="button"
+          onClick={async () => {
+            if (!username.trim() || !password.trim()) {
+              setError('Debes completar todos los campos.');
+              return;
+            }
 
-        // Redireccionar al Home
-        navigate('/');
-    };
+            try {
+              const res = await fetch('http://10.33.0.22:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: username,
+                  contraseña: password,
+                }),
+              });
 
-    const handleMicrosoftLogin = () => {
-        alert('Login con Microsoft (en construcción 🍆💦)');
-    };
+              const data = await res.json();
+              console.log('🔍 DATA:', data);
 
-    return (
-        <div className="login-container">
-            <h2>Iniciar sesión</h2>
+              if (res.ok) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', data.nombre);
+              
+                // Esperá un instante antes de navegar (esto es clave)
+                setTimeout(() => {
+                  navigate('/');
+                }, 100);
+              } else {
+                setError(data.error || 'Credenciales incorrectas.');
+              }
+            } catch (err) {
+              console.error(err);
+              setError('No se pudo conectar con el servidor.');
+            }
+          }}
+        >
+          Ingresar
+        </button>
+      </form>
 
-            <form onSubmit={handleLogin}>
-                <input
-                    type="text"
-                    placeholder="Usuario"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Ingresar</button>
-            </form>
+      {/* Mostrar error si hay */}
+      {error && <div className="error">{error}</div>}
 
-            {/* Mostrar error si hay */}
-            {error && <div className="error">{error}</div>}
+      <hr />
 
-            <hr />
+      {/* Botón futuro login con Microsoft */}
+      <button className="microsoft-button" onClick={() => alert('Login con Microsoft (en construcción 🍆💦)')}>
+        Login con Microsoft
+      </button>
 
-            {/* Botón futuro login con Microsoft */}
-            <button className="microsoft-button" onClick={handleMicrosoftLogin}>
-                Login con Microsoft
-            </button>
-        </div>
-    );
+      {/* Enlace para registrarse */}
+      <p className="registro-link">
+        ¿No estás registrado? <Link to="/register">Registrate</Link>
+      </p>
+    </div>
+  );
 }
 
 export default Login;
-
