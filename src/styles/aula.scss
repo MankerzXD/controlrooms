@@ -69,9 +69,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-direction: column;
         gap: 1rem;
         padding: 0.5rem 0;
         border-top: 1px solid #eee;
+        cursor: default;
 
         &:first-child {
           border-top: none;
@@ -86,6 +88,21 @@
         .modalidad {
           font-size: 0.875rem;
           color: #555;
+        }
+        .container-infox{
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .info-extra{
+          .profesor-materia{
+
+          display: flex;
+          width: 100%;
+          justify-content: center;
+          align-items: center;
+          }
         }
       }
 
