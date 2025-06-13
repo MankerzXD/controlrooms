@@ -39,7 +39,7 @@ function Register() {
     const BASE_URL = window.location.origin;
 
     try {
-      const res = await fetch(`http://10.33.0.22:5000/api/auth/register`, {
+      const res = await fetch(`http://10.33.0.138:5000/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

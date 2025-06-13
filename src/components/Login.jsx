@@ -37,7 +37,7 @@ function Login() {
             }
 
             try {
-              const res = await fetch('http://10.33.0.22:5000/api/auth/login', {
+              const res = await fetch('http://10.33.0.138:5000/api/auth/login', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
