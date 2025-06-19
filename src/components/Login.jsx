@@ -28,48 +28,83 @@ function Login() {
           required
         />
 
-        <button
-          type="button"
-          onClick={async () => {
-            if (!username.trim() || !password.trim()) {
-              setError('Debes completar todos los campos.');
-              return;
-            }
+<button
+  type="button"
+  onClick={async () => {
+    if (!username.trim() || !password.trim()) {
+      setError('Debes completar todos los campos.');
+      return;
+    }
 
-            try {
-              const res = await fetch('http://10.33.0.138:5000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  email: username,
-                  contraseña: password,
-                }),
-              });
+    try {
+      // 👇 Simulación interna (sin backend, sin archivos externos)
+      const usuarios = [
+        {
+          email: 'soportista@ucema.edu.ar',
+          password: '1234',
+          nombre: 'Soportista Ale',
+          rol: 'soportista',
+        },
+        {
+          email: 'coordinador@ucema.edu.ar',
+          password: '1234',
+          nombre: 'Coordinador Juan',
+          rol: 'coordinador',
+        },
+      ];
 
-              const data = await res.json();
-              console.log('🔍 DATA:', data);
+      const user = usuarios.find(
+        (u) => u.email === username && u.password === password
+      );
 
-              if (res.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', data.nombre);
-              
-                // Esperá un instante antes de navegar (esto es clave)
-                setTimeout(() => {
-                  navigate('/');
-                }, 100);
-              } else {
-                setError(data.error || 'Credenciales incorrectas.');
-              }
-            } catch (err) {
-              console.error(err);
-              setError('No se pudo conectar con el servidor.');
-            }
-          }}
-        >
-          Ingresar
-        </button>
+      if (!user) {
+        setError('Credenciales incorrectas.');
+        return;
+      }
+
+      // Guardamos token simulado y datos
+      const fakeToken = btoa(`${username}:faketoken`);
+      localStorage.setItem('token', fakeToken);
+      localStorage.setItem('user', user.nombre);
+      localStorage.setItem('rol', user.rol);
+
+      setTimeout(() => {
+        navigate('/');
+      }, 100);
+
+      // 🔒 Código real comentado
+      /*
+      const res = await fetch('http://10.33.0.138:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: username,
+          contraseña: password,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', data.nombre);
+        setTimeout(() => {
+          navigate('/');
+        }, 100);
+      } else {
+        setError(data.error || 'Credenciales incorrectas.');
+      }
+      */
+    } catch (err) {
+      console.error(err);
+      setError('Error inesperado al simular el login.');
+    }
+  }}
+>
+  Ingresar
+</button>
+
       </form>
 
       {/* Mostrar error si hay */}
